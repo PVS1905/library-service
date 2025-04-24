@@ -126,6 +126,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
@@ -140,6 +141,5 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=800),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION1",
-    # "ROTATE_REFRESH_TOKENS": False,
+    "ROTATE_REFRESH_TOKENS": False,
 }
