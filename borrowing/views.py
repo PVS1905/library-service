@@ -27,17 +27,30 @@ class BorrowingView(viewsets.ModelViewSet):
         if self.action == "create":
             return BorrowingCreateSerializer
         if self.action == "retrieve":
-                return BorrowingDetailSerializer
+            return BorrowingDetailSerializer
         return BorrowingListSerializer
 
     def perform_create(self, serializer):
         book = serializer.validated_data["book"]
-
         book.inventory -= 1
         book.save()
         serializer.save(user=self.request.user)
 
-
-
     def get_queryset(self):
-        return Borrowing.objects.filter(user=self.request.user)
+        queryset = self.queryset
+
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(user=self.request.user)
+        else:
+            user_id = self.request.query_params.get("user_id")
+            if user_id is not None:
+                queryset = queryset.filter(user_id=user_id)
+
+        is_active = self.request.query_params.get("is_active")
+        if is_active is not None:
+            if is_active.lower() == "true":
+                queryset = queryset.filter(actual_return_date__isnull=True)
+            elif is_active.lower() == "false":
+                queryset = queryset.filter(actual_return_date__isnull=False)
+
+        return queryset
