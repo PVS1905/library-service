@@ -38,8 +38,11 @@ class BorrowingCreateSerializer(BorrowingListSerializer):
 
     def validate(self, attrs):
         data = super(BorrowingCreateSerializer, self).validate(attrs=attrs)
-        attrs['borrow_date'] = timezone.now()
+        attrs["borrow_date"] = timezone.now()
+        book = attrs["book"]
 
+        if book.inventory < 1:
+             raise ValidationError("This book is currently unavailable.")
         Borrowing.validate_borrowing(
             attrs["borrow_date"],
             attrs["expected_return_date"],

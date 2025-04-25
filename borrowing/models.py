@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.conf import settings
 
 from django.db import models
 
@@ -10,6 +11,9 @@ class Borrowing(models.Model):
     expected_return_date = models.DateTimeField()
     actual_return_date = models.DateTimeField(null=True, blank=True)
     book = models.ForeignKey(Book, related_name="borrowings", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
 
     @staticmethod
     def validate_borrowing(borrow_date, expected_return_date, actual_return_date=None):
@@ -24,6 +28,7 @@ class Borrowing(models.Model):
                 raise ValidationError("Actual return date cannot be earlier than the rental date")
             if actual_return_date > timezone.now():
                 raise ValidationError("Actual return date cannot be in the future")
+
 
     def clean(self):
         Borrowing.validate_borrowing(
