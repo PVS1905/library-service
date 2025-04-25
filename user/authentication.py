@@ -6,4 +6,4 @@ class CustomHeaderJWTAuthentication(JWTAuthentication):
         header = request.META.get("HTTP_AUTHORIZE")
         if header is None:
             return None
-        return header.encode('utf-8')
+        return header.encode("utf-8")

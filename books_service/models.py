@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Book(models.Model):
     class StatusChoices(models.TextChoices):
         HARD = "HARD"
@@ -11,10 +12,12 @@ class Book(models.Model):
     inventory = models.PositiveIntegerField()
     daily_free = models.DecimalField(max_digits=10, decimal_places=2)
 
-
     def __str__(self):
         return f"{self.title} ({self.author})"
 
     class Meta:
-        unique_together = ("title", "author",)
+        unique_together = (
+            "title",
+            "author",
+        )
         ordering = ["title", "author"]

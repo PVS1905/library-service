@@ -59,7 +59,10 @@ class BorrowingView(viewsets.ModelViewSet):
         borrowing = self.get_object()
 
         if borrowing.actual_return_date is not None:
-            return Response({"detail": "This book has already been returned."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "This book has already been returned."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         borrowing.actual_return_date = now()
         borrowing.book.inventory += 1
