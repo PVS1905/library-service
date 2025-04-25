@@ -1,11 +1,10 @@
 from django.utils.timezone import now
+
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from books_service.permissions import IsAdminOrIfAuthenticatedReadOnly
 from borrowing.models import Borrowing
 from borrowing.serialisers import (
     BorrowingListSerializer,
@@ -54,3 +53,17 @@ class BorrowingView(viewsets.ModelViewSet):
                 queryset = queryset.filter(actual_return_date__isnull=False)
 
         return queryset
+
+    @action(detail=True, methods=["post"])
+    def return_book(self, request, pk=None):
+        borrowing = self.get_object()
+
+        if borrowing.actual_return_date is not None:
+            return Response({"detail": "This book has already been returned."}, status=status.HTTP_400_BAD_REQUEST)
+
+        borrowing.actual_return_date = now()
+        borrowing.book.inventory += 1
+        borrowing.book.save()
+        borrowing.save()
+
+        return Response(BorrowingDetailSerializer(borrowing).data)
