@@ -20,6 +20,10 @@ class Borrowing(models.Model):
         on_delete=models.CASCADE
     )
 
+    @property
+    def is_active(self):
+        return self.actual_return_date is None
+
     @staticmethod
     def validate_borrowing(
             borrow_date,

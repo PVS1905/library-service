@@ -7,14 +7,12 @@ from borrowing.models import Borrowing
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
+    is_active = serializers.ReadOnlyField()
     title = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="title", source="book"
     )
     author = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field="author", source="book"
-    )
-    inventory = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field="inventory", source="book"
     )
 
     class Meta:
@@ -23,10 +21,8 @@ class BorrowingListSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "author",
-            "inventory",
             "borrow_date",
-            # "expected_return_date",
-            # "actual_return_date",
+            "is_active",
         )
 
 

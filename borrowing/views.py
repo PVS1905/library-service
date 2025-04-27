@@ -52,7 +52,10 @@ class BorrowingView(viewsets.ModelViewSet):
 
         return queryset
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True,
+            methods=["post"],
+            url_path="return_book",
+            name="return-book")
     def return_book(self, request, pk=None):
         borrowing = self.get_object()
 
