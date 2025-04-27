@@ -11,13 +11,11 @@ from borrowing.serialisers import (
     BorrowingDetailSerializer,
     BorrowingCreateSerializer,
 )
-from user.authentication import CustomHeaderJWTAuthentication
 
 
 class BorrowingView(viewsets.ModelViewSet):
     queryset = Borrowing.objects.select_related("book")
     http_method_names = ["get", "post"]
-    authentication_classes = (CustomHeaderJWTAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
