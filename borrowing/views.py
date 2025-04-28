@@ -1,4 +1,5 @@
 from django.utils.timezone import now
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
@@ -55,7 +56,8 @@ class BorrowingView(viewsets.ModelViewSet):
     @action(detail=True,
             methods=["post"],
             url_path="return_book",
-            name="return-book")
+            name="return-book"
+            )
     def return_book(self, request, pk=None):
         borrowing = self.get_object()
 
@@ -71,3 +73,30 @@ class BorrowingView(viewsets.ModelViewSet):
         borrowing.save()
 
         return Response(BorrowingDetailSerializer(borrowing).data)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "user_id",
+                type=int,
+                description="(Admins only) Filter borrowings by "
+                            "user ID (example: ?user_id=5)",
+            ),
+            OpenApiParameter(
+                "is_active",
+                type=bool,
+                description="(Admins only) Filter borrowings by "
+                            "active status (example: ?is_active=true)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        description="Create a new borrowing for an authenticated user.",
+        request=BorrowingCreateSerializer,
+        responses=BorrowingCreateSerializer,
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
